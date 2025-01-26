@@ -18,12 +18,9 @@ Think of Haifus.fun as platform for strategies like **MicroStrategy, but entirel
 2. **Operation**  
    * Haifu is operated in a way where it can generate benefits. This includes automating a stablecoin operations by liquidating CDP positions, liquidating bad debts, trading in arbitrage, etc.
 3. **Redeptions**
-    * After fund expires, all operated funds are converted into $HAIFU on CLOB, and backers can claim back their profit or loss from Haifu via claiming with their haifu token to get $HAIFU.
+    * After fund expires, all operated cryptos are converted into $HAIFU on CLOB, and backers can claim back their profit or loss from Haifu via claiming with their haifu token to get $HAIFU.
 
 ---
-
-
-
 
 ## Foundry
 
