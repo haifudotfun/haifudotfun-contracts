@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {IHaifu} from "../interfaces/IHaifu.sol";
 
-contract Haifu is ERC20, AccessControl, Initializable, IHaifu {
+contract Haifu is ERC20, AccessControl, Initializable {
     // Define roles
     bytes32 public constant WHITELIST = keccak256("WHITELIST");
     IHaifu.State public info;
@@ -18,7 +18,7 @@ contract Haifu is ERC20, AccessControl, Initializable, IHaifu {
     function initialize(IHaifu.State memory haifu) public initializer {
         
         // Grant the admin role to the deployer
-        grantRole(DEFAULT_ADMIN_ROLE, haifu.admin);
+        grantRole(DEFAULT_ADMIN_ROLE, haifu.creator);
 
         // Mint initial supply to the token to the contract to trade
         _mint(address(this), haifu.totalSupply);
@@ -33,15 +33,15 @@ contract Haifu is ERC20, AccessControl, Initializable, IHaifu {
 
     function commit(address deposit, uint256 amount) public {
         require(hasRole(WHITELIST, msg.sender), "Caller is not whitelisted");
-        require(info.deposit + amount <= info.goal, "Goal reached");
-        info.deposit += amount;
+        require(info.raised + amount <= info.goal, "Goal reached");
+        info.raised += amount;
         _mint(deposit, amount);
     }
 
     function withdraw(address deposit, uint256 amount) public {
         require(hasRole(WHITELIST, msg.sender), "Caller is not whitelisted");
-        require(info.deposit - amount >= 0, "Not enough deposit");
-        info.deposit -= amount;
+        require(info.raised - amount >= 0, "Not enough deposit");
+        info.raised -= amount;
         _burn(deposit, amount);
     }
 
@@ -50,6 +50,7 @@ contract Haifu is ERC20, AccessControl, Initializable, IHaifu {
         require(block.timestamp >= info.fundAcceptingExpiaryDate, "Fund raising is not expired");
         require(block.timestamp < info.fundExpiaryDate, "Fund raising is expired");
         grantRole(WHITELIST, info.fundManager);
+        return leftHaifu;
     }
 
     function expire() public {

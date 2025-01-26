@@ -5,6 +5,8 @@ openzeppelin-contracts/=lib/openzeppelin-contracts/
 
 @openzeppelin/contracts/=lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/
 @openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/
+solidity-stringutils/=lib/openzeppelin-foundry-upgrades/lib/solidity-stringutils/
+@standardweb3/=lib/standard3.0-contracts/src/
 
 @lukso/=node_modules/@lukso/
 @erc725/=node_modules/@erc725/

@@ -23,19 +23,20 @@ contract HaifuFactory is  Initializable {
     mapping(address => uint256) public listingCosts;
 
     error InvalidAccess(address sender, address allowed);
-    error HaifuAlreadyExists(address base, address quote, address pair);
-    error SameBaseQuote(address base, address quote);
+    error HaifuAlreadyExists(string  name, string symbol, address creator);
 
     constructor() {}
 
     function createHaifu(
+        string memory name,
+        string memory symbol,
         IHaifu.State memory haifu
     ) external returns (address orderbook) {
         if (msg.sender != launchpad) {
             revert InvalidAccess(msg.sender, launchpad);
         }
 
-        address hfu = _predictAddress(haifu.name, haifu.symbol, haifu.creator);
+        address hfu = _predictAddress(name, symbol, haifu.creator);
 
         // Check if the address has code
         uint32 size;
@@ -45,12 +46,13 @@ contract HaifuFactory is  Initializable {
 
         // If the address has code and it's a clone of impl, revert.
         if (size > 0 || CloneFactory._isClone(impl, hfu)) {
-            revert HaifuAlreadyExists(haifu.name, haifu.symbol, haifu.creator);
+            revert HaifuAlreadyExists(name, symbol, haifu.creator);
         }
 
-        address proxy = CloneFactory._createCloneWithSalt(
+        address proxy = CloneFactory._createCloneWithSaltAndConstructorArgs(
             impl,
-            _getSalt(haifu.name, haifu.symbol, haifu.creator)
+            abi.encode(name, symbol),
+            _getSalt(name, symbol, haifu.creator)
         );
         IHaifu(proxy).initialize(haifu);
         allHaifus.push(proxy);

@@ -2,28 +2,32 @@
 pragma solidity ^0.8.24;
 interface IHaifu {
     struct State {
-        string name;
-        string symbol;
-        address creator;
         uint256 totalSupply;
-        address HAIFU;
+        address creator;
         address fundManager;
-        uint256 deposit;
+        address deposit;
+        uint256 depositPrice;
+        uint256 raised;
         uint256 goal;
-        uint256 launchPrice;
+        address HAIFU;
         uint256 haifuPrice;
-        uint256 haifuCap;
+        uint256 haifuGoal;
+        uint256 haifuRaised;
         uint256 fundAcceptingExpiaryDate;
         uint256 fundExpiaryDate;
     }
 
     function isWhitelisted(address account) external view returns (bool);
 
+    function info() external view returns (State memory);
+
     function fundAcceptingExpiaryDate() external view returns (uint256);
 
     function fundExpiaryDate() external view returns (uint256);
 
-    function createHaifu(State memory haifu) external;
+    function createHaifu(string memory name, string memory symbol, State memory haifu) external;
+
+    function initialize(State memory haifu) external;
 
     function commit(address sender, address deposit, uint256 amount) external;
 
@@ -48,6 +52,8 @@ interface IHaifu {
     function goal() external view returns (uint256);
 
     function haifuCap() external view returns (uint256);
+    
+    function depositPrice() external view returns (uint256);
 
     function haifuPrice() external view returns (uint256);
 
@@ -57,5 +63,5 @@ interface IHaifu {
 
     function open() external returns (uint256 leftHaifu);
 
-    function expire() external;
+    function expire(address deposit) external;
 }
