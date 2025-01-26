@@ -1,3 +1,30 @@
+### **Haifus.fun**
+
+#### **What is it?**
+
+Haifus.fun is launchpad to fundraise automated agents that moves your crypto across defi platforms to compound your capital as quickly + safely as possible(e.g. a tokenized vehicle for ETH accumulation, onchain strategies for benefiting from arbitrages, etc).
+
+Think of Haifus.fun as platform for strategies like **MicroStrategy, but entirely onchain and transparent**. If you’re familiar with how MicroStrategy operates, you have entire platform to do that on various digital assets.
+
+---
+
+### **How It Works**
+
+0. **Haifu**
+   * Haifu is the automated or coordinated strategy by AI or human to operate your crypto. The profit or loss after operation is distributed pro-rata to its haifu token.
+1. **Fundraising**  
+   * The protocol starts with an Haifu token as a pool funded by either whitelisted depositors or $HAIFU token holders.  
+   * Early backers receive Haifu token, aligning their incentives with the Haifu's growth.  
+2. **Operation**  
+   * Haifu is operated in a way where it can generate benefits. This includes automating a stablecoin operations by liquidating CDP positions, liquidating bad debts, trading in arbitrage, etc.
+3. **Redeptions**
+    * After fund expires, all operated funds are converted into $HAIFU on CLOB, and backers can claim back their profit or loss from Haifu via claiming with their haifu token to get $HAIFU.
+
+---
+
+
+
+
 ## Foundry
 
 **Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
