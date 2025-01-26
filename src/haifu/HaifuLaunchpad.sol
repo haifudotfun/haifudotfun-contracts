@@ -122,9 +122,9 @@ contract HaifuLaunchpad is AccessControl, Initializable {
 
         // open haifu if fund has reached goal, else expire haifu
         if (IHaifu(haifu).isCapitalRaised()) {
-            // make pair on clob for haifu for 10% of total haifu supply after sale
+            // add pair on clob for haifu to make orders on haifu/{deposit} pair
             IMatchingEngine(matchingEngine).addPair(haifu, deposit, 10);
-            // make pair on clob for haifu for 10% of total haifu supply after sale
+            // add pair on clob for haifu to make orders on haifu/$HAIFU pair
             IMatchingEngine(matchingEngine).addPair(haifu, HAIFU, 10);
             // if fund is successfully raised, open haifu will bring funds to this contract for MM.
             uint256 haifuLeft = IHaifu(haifu).open();
