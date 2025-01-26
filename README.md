@@ -13,12 +13,14 @@ Think of Haifus.fun as platform for strategies like **MicroStrategy, but entirel
 0. **Haifu**
    * Haifu is the automated or coordinated strategy by AI or human to operate your crypto. The profit or loss after operation is distributed pro-rata to its haifu token.
 1. **Fundraising**  
-   * The protocol starts with an Haifu token as a pool funded by either whitelisted depositors or $HAIFU token holders.  
-   * Early backers receive Haifu token, aligning their incentives with the Haifu's growth.  
+   * The protocol starts with an Haifu token as a pool funded by either whitelisted depositors or $HAIFU token holders regardless of whitelisting.
+   * Early backers receive Haifu token, aligning their incentives with the Haifu's growth.
+   * After successful fundraising, 10% of the deposit token will be placed as bid order in **{haifu token}/{deposit token}** pair, and rest will be sent to fund manager address.
+   * Raised $HAIFU by $HAIFU token holders will be placed as bid order for **{haifu token}/$HAIFU** pair.
 2. **Operation**  
    * Haifu is operated in a way where it can generate benefits. This includes automating a stablecoin operations by liquidating CDP positions, liquidating bad debts, trading in arbitrage, etc.
 3. **Redeptions**
-    * After fund expires, all operated cryptos are converted into $HAIFU on CLOB, and backers can claim back their profit or loss from Haifu via claiming with their haifu token to get $HAIFU.
+    * After fund expires, all operated cryptos are converted into $HAIFU on CLOB in $HAIFU/{managing asset} pair, and backers can claim back their profit or loss from Haifu via claiming with their haifu token to get $HAIFU.
 
 ---
 
