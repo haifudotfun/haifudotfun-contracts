@@ -14,7 +14,7 @@ contract HaifuFactory is  Initializable {
     // Orderbooks
     address[] public allHaifus;
     /// Address of manager
-    address public override launchpad;
+    address public launchpad;
     /// version number of impl
     uint32 public version;
     /// address of order impl
@@ -30,30 +30,30 @@ contract HaifuFactory is  Initializable {
 
     function createHaifu(
         IHaifu.State memory haifu
-    ) external override returns (address orderbook) {
-        if (msg.sender != engine) {
-            revert InvalidAccess(msg.sender, engine);
+    ) external returns (address orderbook) {
+        if (msg.sender != launchpad) {
+            revert InvalidAccess(msg.sender, launchpad);
         }
 
-        address haifu = _predictAddress(haifu.name, haifu.symbol, haifu.creator);
+        address hfu = _predictAddress(haifu.name, haifu.symbol, haifu.creator);
 
         // Check if the address has code
         uint32 size;
         assembly {
-            size := extcodesize(pair)
+            size := extcodesize(hfu)
         }
 
         // If the address has code and it's a clone of impl, revert.
-        if (size > 0 || CloneFactory._isClone(impl, pair)) {
-            revert PairAlreadyExists(base_, quote_, pair);
+        if (size > 0 || CloneFactory._isClone(impl, hfu)) {
+            revert HaifuAlreadyExists(haifu.name, haifu.symbol, haifu.creator);
         }
 
         address proxy = CloneFactory._createCloneWithSalt(
             impl,
-            _getSalt(base_, quote_)
+            _getSalt(haifu.name, haifu.symbol, haifu.creator)
         );
-        IHaifu(proxy).initialize(allPairsLength(), base_, quote_, engine);
-        allPairs.push(proxy);
+        IHaifu(proxy).initialize(haifu);
+        allHaifus.push(proxy);
         return (proxy);
     }
 
@@ -63,11 +63,11 @@ contract HaifuFactory is  Initializable {
 
     /**
      * @dev Initialize orderbook factory contract with engine address, reinitialize if engine is reset.
-     * @param engine_ The address of the engine contract
+     * @param launchpad_ The address of the engine contract
      * @return address of pair implementation contract
      */
-    function initialize(address engine_) public initializer returns (address) {
-        engine = engine_;
+    function initialize(address launchpad_) public initializer returns (address) {
+        launchpad = launchpad_;
         _createImpl();
         return impl;
     }
@@ -91,8 +91,8 @@ contract HaifuFactory is  Initializable {
     }
 
     function _predictAddress(
-        string name,
-        string symbol,
+        string memory name,
+        string memory symbol,
         address creator
     ) internal view returns (address) {
         bytes32 salt = _getSalt(name, symbol, creator);
@@ -100,8 +100,8 @@ contract HaifuFactory is  Initializable {
     }
 
     function _getSalt(
-        string name,
-        string symbol,
+        string memory name,
+        string memory symbol,
         address creator
     ) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(name, symbol, creator));

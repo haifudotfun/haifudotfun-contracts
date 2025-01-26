@@ -45,7 +45,7 @@ contract Haifu is ERC20, AccessControl, Initializable, IHaifu {
         _burn(deposit, amount);
     }
 
-    function open() public {
+    function open() public returns (uint256 leftHaifu) {
         require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
         require(block.timestamp >= info.fundAcceptingExpiaryDate, "Fund raising is not expired");
         require(block.timestamp < info.fundExpiaryDate, "Fund raising is expired");
