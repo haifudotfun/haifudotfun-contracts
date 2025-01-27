@@ -49,10 +49,7 @@ contract Haifu is ERC20, AccessControl, Initializable {
     }
 
     function setWhiteList(address account) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(
-            hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
-            "Caller is not an admin"
-        );
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
         grantRole(WHITELIST, account);
     }
 
@@ -66,7 +63,10 @@ contract Haifu is ERC20, AccessControl, Initializable {
         return (address(this), haifuAmount);
     }
 
-    function commit(address deposit, address sender, uint256 amount) public returns (address haifu, uint256 haifuTAmount) {
+    function commit(address deposit, address sender, uint256 amount)
+        public
+        returns (address haifu, uint256 haifuTAmount)
+    {
         require(deposit == info.deposit, "Deposit token is not supported");
         require(hasRole(WHITELIST, sender), "Caller is not whitelisted");
         require(info.raised + amount <= info.goal, "Goal reached");
@@ -108,19 +108,13 @@ contract Haifu is ERC20, AccessControl, Initializable {
         return (info.deposit, depositAmount);
     }
 
-    function open() public returns (IHaifu.OrderInfo memory depositOrderInfo, IHaifu.OrderInfo memory haifuOrderInfo, uint256 leftHaifu) {
-        require(
-            hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
-            "Caller is not an admin"
-        );
-        require(
-            block.timestamp >= info.fundAcceptingExpiaryDate,
-            "Fund raising acceptance is not expired"
-        );
-        require(
-            block.timestamp < info.fundExpiaryDate,
-            "Fund raising is expired"
-        );
+    function open()
+        public
+        returns (IHaifu.OrderInfo memory depositOrderInfo, IHaifu.OrderInfo memory haifuOrderInfo, uint256 leftHaifu)
+    {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
+        require(block.timestamp >= info.fundAcceptingExpiaryDate, "Fund raising acceptance is not expired");
+        require(block.timestamp < info.fundExpiaryDate, "Fund raising is expired");
         grantRole(WHITELIST, info.fundManager);
 
         // send carry to creator
@@ -128,12 +122,15 @@ contract Haifu is ERC20, AccessControl, Initializable {
 
         // 10% of the deposit token will be placed as bid order in {haifu token}/{deposit token} pair, and rest will be sent to fund manager address.
         uint256 depositBalance = balanceOf(info.deposit);
-        (depositOrderInfo.makePrice, depositOrderInfo.placed, depositOrderInfo.orderId) = IMatchingEngine(matchingEngine).marketBuy(address(this), info.deposit, depositBalance / 10, true, 20, info.fundManager);
+        (depositOrderInfo.makePrice, depositOrderInfo.placed, depositOrderInfo.orderId) = IMatchingEngine(
+            matchingEngine
+        ).marketBuy(address(this), info.deposit, depositBalance / 10, true, 20, info.fundManager);
         // send 90% of deposit token to fund manager address
         TransferHelper.safeTransfer(address(this), info.fundManager, balanceOf(address(this)));
         // Raised $HAIFU by $HAIFU token holders will be placed as bid order for {haifu token}/$HAIFU pair.
         uint256 haifuBalance = balanceOf(info.HAIFU);
-        (haifuOrderInfo.makePrice, haifuOrderInfo.placed, haifuOrderInfo.orderId) = IMatchingEngine(matchingEngine).marketBuy(address(this), info.HAIFU, haifuBalance, true, 20, address(this));
+        (haifuOrderInfo.makePrice, haifuOrderInfo.placed, haifuOrderInfo.orderId) =
+            IMatchingEngine(matchingEngine).marketBuy(address(this), info.HAIFU, haifuBalance, true, 20, address(this));
         // Rest of Haifu token will be sent to creator address.
         TransferHelper.safeTransfer(address(this), creator, leftHaifu);
         // return order ids of each deposit and haifu pair
@@ -141,49 +138,40 @@ contract Haifu is ERC20, AccessControl, Initializable {
     }
 
     function expire(address expiringAsset) public returns (IHaifu.OrderInfo memory rematchOrderInfo) {
-        require(
-            block.timestamp >= info.fundExpiaryDate,
-            "Fund raising is not expired"
-        );
+        require(block.timestamp >= info.fundExpiaryDate, "Fund raising is not expired");
         // call Expire function to the fund manager to claim back the asset
         uint256 redeemed = IHaifu(info.fundManager).expire(expiringAsset);
         // turn redeemed asset to $HAIFU
-        (rematchOrderInfo.makePrice, rematchOrderInfo.placed, rematchOrderInfo.orderId)=IMatchingEngine(matchingEngine).marketBuy(info.HAIFU, expiringAsset, redeemed, true, 20, address(this));
+        (rematchOrderInfo.makePrice, rematchOrderInfo.placed, rematchOrderInfo.orderId) =
+            IMatchingEngine(matchingEngine).marketBuy(info.HAIFU, expiringAsset, redeemed, true, 20, address(this));
         // return order id from buying $HAIFU
         return rematchOrderInfo;
     }
 
-    function trackExpiary(address expiringAsset, uint32 orderId) public returns (IHaifu.OrderInfo memory rematchOrderInfo) {
-        require(
-            block.timestamp >= info.fundExpiaryDate,
-            "Fund is not expired"
-        );
+    function trackExpiary(address expiringAsset, uint32 orderId)
+        public
+        returns (IHaifu.OrderInfo memory rematchOrderInfo)
+    {
+        require(block.timestamp >= info.fundExpiaryDate, "Fund is not expired");
         // track expiary, rematch bid order in HAIFU/{expiringAsset} pair for an order id
         uint256 refunded = IMatchingEngine(matchingEngine).cancelOrder(info.HAIFU, expiringAsset, true, orderId);
 
         // make market buy
-        (rematchOrderInfo.makePrice, rematchOrderInfo.placed, rematchOrderInfo.orderId) = IMatchingEngine(matchingEngine).marketBuy(info.HAIFU, expiringAsset, refunded, true, 20, address(this));
+        (rematchOrderInfo.makePrice, rematchOrderInfo.placed, rematchOrderInfo.orderId) =
+            IMatchingEngine(matchingEngine).marketBuy(info.HAIFU, expiringAsset, refunded, true, 20, address(this));
         return rematchOrderInfo;
     }
 
     function checkFundAcceptingExpiaryDate() external view {
-        require(
-            block.timestamp < info.fundAcceptingExpiaryDate,
-            "Fund raising is expired"
-        );
+        require(block.timestamp < info.fundAcceptingExpiaryDate, "Fund raising is expired");
     }
 
     function checkFundExpiaryDate() external view {
-        require(
-            block.timestamp < info.fundExpiaryDate,
-            "Fund raising is expired"
-        );
+        require(block.timestamp < info.fundExpiaryDate, "Fund raising is expired");
     }
 
     // Override supportsInterface to include AccessControl's interface
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view override(AccessControl) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

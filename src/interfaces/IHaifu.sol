@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.24;
+
 interface IHaifu {
     struct State {
         uint256 totalSupply;
@@ -47,7 +48,7 @@ interface IHaifu {
 
     function commit(address sender, address deposit, uint256 amount) external;
 
-    function commitHaifu(address sender, uint256 amount) external; 
+    function commitHaifu(address sender, uint256 amount) external;
 
     function withdraw(address sender, address deposit, uint256 amount) external;
 
@@ -59,7 +60,10 @@ interface IHaifu {
 
     function getCarry(address account, uint256 amount, bool isMaker) external view returns (uint256);
 
-    function getHaifu(string memory name, string memory symbol, address creator) external view returns (State memory state);
+    function getHaifu(string memory name, string memory symbol, address creator)
+        external
+        view
+        returns (State memory state);
 
     function getCommitted(address account) external view returns (uint256 committed);
 
@@ -72,7 +76,7 @@ interface IHaifu {
     function goal() external view returns (uint256);
 
     function haifuCap() external view returns (uint256);
-    
+
     function depositPrice() external view returns (uint256);
 
     function haifuPrice() external view returns (uint256);

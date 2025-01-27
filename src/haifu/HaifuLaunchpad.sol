@@ -32,21 +32,9 @@ contract HaifuLaunchpad is AccessControl, Initializable {
 
     // errors
     error HaifuAlreadyExists(address haifu);
-    error HaifuIsNotAccepting(
-        address haifu,
-        uint256 fundAcceptingExpiaryDate,
-        uint256 current
-    );
-    error HaifuIsNotOpen(
-        address haifu,
-        uint256 fundAcceptingExpiaryDate,
-        uint256 current
-    );
-    error HaifuIsNotExpired(
-        address haifu,
-        uint256 fundExpiaryDate,
-        uint256 current
-    );
+    error HaifuIsNotAccepting(address haifu, uint256 fundAcceptingExpiaryDate, uint256 current);
+    error HaifuIsNotOpen(address haifu, uint256 fundAcceptingExpiaryDate, uint256 current);
+    error HaifuIsNotExpired(address haifu, uint256 fundExpiaryDate, uint256 current);
     error HaifuIsNotWhitelisted(address haifu, address account);
     error AmountIsZero();
     error InvalidHaifu();
@@ -100,11 +88,10 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         emit HaifuWithdraw(haifu, HAIFU, amount);
     }
 
-    function launchHaifu(
-        string memory name,
-        string memory symbol,
-        IHaifu.State memory haifu
-    ) external onlyRole(CREATOR) {
+    function launchHaifu(string memory name, string memory symbol, IHaifu.State memory haifu)
+        external
+        onlyRole(CREATOR)
+    {
         // Pay $HAIFU token creation fee
         TransferHelper.safeTransferFrom(HAIFU, msg.sender, address(this), fee);
         // Send to feeTo address
@@ -129,9 +116,7 @@ contract HaifuLaunchpad is AccessControl, Initializable {
     }
 
     // Internal function to retrieve Haifu info
-    function _getHaifuInfo(
-        address haifu
-    ) internal view returns (IHaifu.HaifuOpenInfo memory) {
+    function _getHaifuInfo(address haifu) internal view returns (IHaifu.HaifuOpenInfo memory) {
         return IHaifu(haifu).openInfo();
     }
 
@@ -143,32 +128,14 @@ contract HaifuLaunchpad is AccessControl, Initializable {
     }
 
     // Internal function to handle capital raised scenario
-    function _handleCapitalRaised(
-        address haifu,
-        IHaifu.HaifuOpenInfo memory info
-    ) internal {
-        IMatchingEngine(matchingEngine).addPair(
-            haifu,
-            info.deposit,
-            info.depositPrice,
-            0,
-            info.deposit
-        );
-        IMatchingEngine(matchingEngine).addPair(
-            haifu,
-            HAIFU,
-            info.haifuPrice,
-            0,
-            info.deposit
-        );
+    function _handleCapitalRaised(address haifu, IHaifu.HaifuOpenInfo memory info) internal {
+        IMatchingEngine(matchingEngine).addPair(haifu, info.deposit, info.depositPrice, 0, info.deposit);
+        IMatchingEngine(matchingEngine).addPair(haifu, HAIFU, info.haifuPrice, 0, info.deposit);
 
         IHaifu(haifu).open();
     }
 
-    function expireHaifu(
-        address haifu,
-        address managingAsset
-    ) external onlyRole(CREATOR) {
+    function expireHaifu(address haifu, address managingAsset) external onlyRole(CREATOR) {
         // check if the haifu fund manager is contract
         address fundManager = IHaifu(haifu).fundManager();
         if (!_isContract(fundManager)) {
@@ -180,11 +147,7 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         // TODO: finish event for indexers
     }
 
-    function trackExpiary(
-        address haifu,
-        address managingAsset,
-        uint32 orderId
-    ) external {
+    function trackExpiary(address haifu, address managingAsset, uint32 orderId) external {
         // track expiary, rematch bid order in HAIFU/{managingAsset} pair
         IHaifu(haifu).trackExpiary(managingAsset, orderId);
     }
@@ -205,19 +168,18 @@ contract HaifuLaunchpad is AccessControl, Initializable {
      * @param creator creator of the haifu.
      * @return haifu The address of haifu.
      */
-    function getHaifu(
-        string memory name,
-        string memory symbol,
-        address creator
-    ) public view returns (IHaifu.State memory haifu) {
+    function getHaifu(string memory name, string memory symbol, address creator)
+        public
+        view
+        returns (IHaifu.State memory haifu)
+    {
         return IHaifu(haifuFactory).getHaifu(name, symbol, creator);
     }
 
-    function _deposit(
-        address haifu,
-        address deposit,
-        uint256 amount
-    ) internal returns (uint256 withoutCarry, address pair) {
+    function _deposit(address haifu, address deposit, uint256 amount)
+        internal
+        returns (uint256 withoutCarry, address pair)
+    {
         // check if amount is zero
         if (amount == 0) {
             revert AmountIsZero();
@@ -228,12 +190,7 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         }
 
         if (deposit != WETH) {
-            TransferHelper.safeTransferFrom(
-                deposit,
-                msg.sender,
-                address(this),
-                amount
-            );
+            TransferHelper.safeTransferFrom(deposit, msg.sender, address(this), amount);
         }
         // TransferHelper.safeTransfer(deposit, feeTo, fee);
 

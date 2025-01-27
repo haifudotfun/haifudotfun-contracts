@@ -10,7 +10,7 @@ interface IERC20 {
     function symbol() external view returns (string memory);
 }
 
-contract HaifuFactory is  Initializable {
+contract HaifuFactory is Initializable {
     // Orderbooks
     address[] public allHaifus;
     /// Address of manager
@@ -25,16 +25,14 @@ contract HaifuFactory is  Initializable {
     mapping(address => uint256) public listingCosts;
 
     error InvalidAccess(address sender, address allowed);
-    error HaifuAlreadyExists(string  name, string symbol, address creator);
+    error HaifuAlreadyExists(string name, string symbol, address creator);
 
     constructor() {}
 
-    function createHaifu(
-        string memory name,
-        string memory symbol,
-        address creator,
-        IHaifu.State memory haifu
-    ) external returns (address ai) {
+    function createHaifu(string memory name, string memory symbol, address creator, IHaifu.State memory haifu)
+        external
+        returns (address ai)
+    {
         if (msg.sender != launchpad) {
             revert InvalidAccess(msg.sender, launchpad);
         }
@@ -53,9 +51,7 @@ contract HaifuFactory is  Initializable {
         }
 
         address proxy = CloneFactory._createCloneWithSaltAndConstructorArgs(
-            impl,
-            abi.encode(name, symbol),
-            _getSalt(name, symbol, creator)
+            impl, abi.encode(name, symbol), _getSalt(name, symbol, creator)
         );
         IHaifu(proxy).initialize(matchingEngine, creator, haifu);
         allHaifus.push(proxy);
@@ -89,27 +85,21 @@ contract HaifuFactory is  Initializable {
         bytes32 salt = keccak256(abi.encodePacked("haifu", version));
         assembly {
             addr := create2(0, add(bytecode, 0x20), mload(bytecode), salt)
-            if iszero(extcodesize(addr)) {
-                revert(0, 0)
-            }
+            if iszero(extcodesize(addr)) { revert(0, 0) }
         }
         impl = addr;
     }
 
-    function _predictAddress(
-        string memory name,
-        string memory symbol,
-        address creator
-    ) internal view returns (address) {
+    function _predictAddress(string memory name, string memory symbol, address creator)
+        internal
+        view
+        returns (address)
+    {
         bytes32 salt = _getSalt(name, symbol, creator);
         return CloneFactory.predictAddressWithSalt(address(this), impl, salt);
     }
 
-    function _getSalt(
-        string memory name,
-        string memory symbol,
-        address creator
-    ) internal pure returns (bytes32) {
+    function _getSalt(string memory name, string memory symbol, address creator) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(name, symbol, creator));
     }
 
