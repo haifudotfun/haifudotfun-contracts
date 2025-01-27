@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {IHaifu} from "../interfaces/IHaifu.sol";
 import {TransferHelper} from "../libraries/TransferHelper.sol";
 import {IMatchingEngine} from "@standardweb3/exchange/interfaces/IMatchingEngine.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Haifu is ERC20, AccessControl, Initializable {
     // Define roles
@@ -118,17 +119,17 @@ contract Haifu is ERC20, AccessControl, Initializable {
         grantRole(WHITELIST, info.fundManager);
 
         // send carry to creator
-        TransferHelper.safeTransfer(info.deposit, creator, balanceOf(info.deposit) * info.carry / 1e8);
+        TransferHelper.safeTransfer(info.deposit, creator, IERC20(info.deposit).balanceOf(address(this)) * info.carry / 1e8);
 
         // 10% of the deposit token will be placed as bid order in {haifu token}/{deposit token} pair, and rest will be sent to fund manager address.
-        uint256 depositBalance = balanceOf(info.deposit);
+        uint256 depositBalance = IERC20(info.deposit).balanceOf(address(this));
         (depositOrderInfo.makePrice, depositOrderInfo.placed, depositOrderInfo.orderId) = IMatchingEngine(
             matchingEngine
         ).marketBuy(address(this), info.deposit, depositBalance / 10, true, 20, info.fundManager);
         // send 90% of deposit token to fund manager address
-        TransferHelper.safeTransfer(address(this), info.fundManager, balanceOf(address(this)));
+        TransferHelper.safeTransfer(address(this), info.fundManager, IERC20(info.deposit).balanceOf(address(this)));
         // Raised $HAIFU by $HAIFU token holders will be placed as bid order for {haifu token}/$HAIFU pair.
-        uint256 haifuBalance = balanceOf(info.HAIFU);
+        uint256 haifuBalance = IERC20(info.HAIFU).balanceOf(address(this));
         (haifuOrderInfo.makePrice, haifuOrderInfo.placed, haifuOrderInfo.orderId) =
             IMatchingEngine(matchingEngine).marketBuy(address(this), info.HAIFU, haifuBalance, true, 20, address(this));
         // Rest of Haifu token will be sent to creator address.
@@ -160,6 +161,17 @@ contract Haifu is ERC20, AccessControl, Initializable {
         (rematchOrderInfo.makePrice, rematchOrderInfo.placed, rematchOrderInfo.orderId) =
             IMatchingEngine(matchingEngine).marketBuy(info.HAIFU, expiringAsset, refunded, true, 20, address(this));
         return rematchOrderInfo;
+    }
+
+    function claimExpiary(address sender, uint256 amount) public {
+        // deposit is obviously haifu token
+        require(block.timestamp >= info.fundExpiaryDate, "Fund is not expired");
+        // burn haifu token
+        _burn(address(this), amount);
+        // calculate HAIFU amount to send
+        uint256 haifuAmount = IERC20(info.HAIFU).balanceOf(address(this)) * amount / info.totalSupply;
+        // send haifu token to haifu token contract
+        TransferHelper.safeTransfer(sender, info.HAIFU, haifuAmount);
     }
 
     function checkFundAcceptingExpiaryDate() external view {
