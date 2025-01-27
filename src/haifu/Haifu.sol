@@ -119,7 +119,9 @@ contract Haifu is ERC20, AccessControl, Initializable {
         grantRole(WHITELIST, info.fundManager);
 
         // send carry to creator
-        TransferHelper.safeTransfer(info.deposit, creator, IERC20(info.deposit).balanceOf(address(this)) * info.carry / 1e8);
+        TransferHelper.safeTransfer(
+            info.deposit, creator, IERC20(info.deposit).balanceOf(address(this)) * info.carry / 1e8
+        );
 
         // 10% of the deposit token will be placed as bid order in {haifu token}/{deposit token} pair, and rest will be sent to fund manager address.
         uint256 depositBalance = IERC20(info.deposit).balanceOf(address(this));
