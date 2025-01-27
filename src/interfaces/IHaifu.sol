@@ -42,7 +42,7 @@ interface IHaifu {
 
     function fundExpiaryDate() external view returns (uint256);
 
-    function createHaifu(string memory name, string memory symbol, address creator, State memory haifu) external;
+    function createHaifu(string memory name, string memory symbol, address creator, State memory haifu) external returns (address);
 
     function initialize(address matchingEngine, address creator, State memory haifu) external;
 
@@ -85,7 +85,9 @@ interface IHaifu {
 
     function isCapitalRaised() external view returns (bool);
 
-    function open() external returns (uint256 leftHaifu);
+    function open() external returns (IHaifu.OrderInfo memory depositOrderInfo, IHaifu.OrderInfo memory haifuOrderInfo, uint256 leftHaifu);
 
-    function expire(address deposit) external returns (uint256 redemptionBalance);
+    function expire(address deposit) external returns (IHaifu.OrderInfo memory rematchOrderInfo);
+
+    function expireFundManager(address fundManager) external returns (uint256 redeemed);
 }

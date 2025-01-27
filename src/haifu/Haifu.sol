@@ -141,7 +141,7 @@ contract Haifu is ERC20, AccessControl, Initializable {
     function expire(address expiringAsset) public returns (IHaifu.OrderInfo memory rematchOrderInfo) {
         require(block.timestamp >= info.fundExpiaryDate, "Fund raising is not expired");
         // call Expire function to the fund manager to claim back the asset
-        uint256 redeemed = IHaifu(info.fundManager).expire(expiringAsset);
+        uint256 redeemed = IHaifu(info.fundManager).expireFundManager(expiringAsset);
         // turn redeemed asset to $HAIFU
         (rematchOrderInfo.makePrice, rematchOrderInfo.placed, rematchOrderInfo.orderId) =
             IMatchingEngine(matchingEngine).marketBuy(info.HAIFU, expiringAsset, redeemed, true, 20, address(this));
