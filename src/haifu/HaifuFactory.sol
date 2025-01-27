@@ -15,6 +15,8 @@ contract HaifuFactory is  Initializable {
     address[] public allHaifus;
     /// Address of manager
     address public launchpad;
+    /// Address of matching engine
+    address public matchingEngine;
     /// version number of impl
     uint32 public version;
     /// address of order impl
@@ -30,13 +32,14 @@ contract HaifuFactory is  Initializable {
     function createHaifu(
         string memory name,
         string memory symbol,
+        address creator,
         IHaifu.State memory haifu
-    ) external returns (address orderbook) {
+    ) external returns (address ai) {
         if (msg.sender != launchpad) {
             revert InvalidAccess(msg.sender, launchpad);
         }
 
-        address hfu = _predictAddress(name, symbol, haifu.creator);
+        address hfu = _predictAddress(name, symbol, creator);
 
         // Check if the address has code
         uint32 size;
@@ -46,15 +49,15 @@ contract HaifuFactory is  Initializable {
 
         // If the address has code and it's a clone of impl, revert.
         if (size > 0 || CloneFactory._isClone(impl, hfu)) {
-            revert HaifuAlreadyExists(name, symbol, haifu.creator);
+            revert HaifuAlreadyExists(name, symbol, creator);
         }
 
         address proxy = CloneFactory._createCloneWithSaltAndConstructorArgs(
             impl,
             abi.encode(name, symbol),
-            _getSalt(name, symbol, haifu.creator)
+            _getSalt(name, symbol, creator)
         );
-        IHaifu(proxy).initialize(haifu);
+        IHaifu(proxy).initialize(matchingEngine, creator, haifu);
         allHaifus.push(proxy);
         return (proxy);
     }
@@ -68,8 +71,9 @@ contract HaifuFactory is  Initializable {
      * @param launchpad_ The address of the engine contract
      * @return address of pair implementation contract
      */
-    function initialize(address launchpad_) public initializer returns (address) {
+    function initialize(address launchpad_, address matchingEngine_) public initializer returns (address) {
         launchpad = launchpad_;
+        matchingEngine = matchingEngine_;
         _createImpl();
         return impl;
     }

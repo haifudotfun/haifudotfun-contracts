@@ -3,13 +3,16 @@ pragma solidity ^0.8.24;
 interface IHaifu {
     struct State {
         uint256 totalSupply;
-        address creator;
+        // carry in fraction of 1e8
+        uint256 carry;
         address fundManager;
         address deposit;
+        // {haifu token} / {deposit token}
         uint256 depositPrice;
         uint256 raised;
         uint256 goal;
         address HAIFU;
+        // {haifu token} / {$HAIFU}
         uint256 haifuPrice;
         uint256 haifuGoal;
         uint256 haifuRaised;
@@ -17,21 +20,38 @@ interface IHaifu {
         uint256 fundExpiaryDate;
     }
 
+    struct OrderInfo {
+        uint256 makePrice;
+        uint256 placed;
+        uint32 orderId;
+    }
+
+    struct HaifuOpenInfo {
+        address creator;
+        address deposit;
+        uint256 depositPrice;
+        uint256 haifuPrice;
+    }
+
     function isWhitelisted(address account) external view returns (bool);
 
-    function info() external view returns (State memory);
+    function openInfo() external view returns (HaifuOpenInfo memory);
 
     function fundAcceptingExpiaryDate() external view returns (uint256);
 
     function fundExpiaryDate() external view returns (uint256);
 
-    function createHaifu(string memory name, string memory symbol, State memory haifu) external;
+    function createHaifu(string memory name, string memory symbol, address creator, State memory haifu) external;
 
-    function initialize(State memory haifu) external;
+    function initialize(address matchingEngine, address creator, State memory haifu) external;
 
     function commit(address sender, address deposit, uint256 amount) external;
 
+    function commitHaifu(address sender, uint256 amount) external; 
+
     function withdraw(address sender, address deposit, uint256 amount) external;
+
+    function withdrawHaifu(address sender, uint256 amount) external;
 
     function trackExpiary(address managingAsset, uint32 orderId) external;
 
@@ -63,5 +83,5 @@ interface IHaifu {
 
     function open() external returns (uint256 leftHaifu);
 
-    function expire(address deposit) external;
+    function expire(address deposit) external returns (uint256 redemptionBalance);
 }

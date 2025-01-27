@@ -4,19 +4,13 @@ pragma solidity ^0.8.24;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {IHaifu} from "../interfaces/IHaifu.sol";
+import {IWETH} from "../interfaces/IWETH.sol";
 import "../libraries/TransferHelper.sol";
 import {IMatchingEngine} from "@standardweb3/exchange/interfaces/IMatchingEngine.sol";
 
 contract HaifuLaunchpad is AccessControl, Initializable {
     // Define roles
     bytes32 public constant CREATOR = keccak256("CREATOR");
-
-    struct HaifuInfo {
-        address creator;
-        address deposit;
-        uint256 depositPrice;
-        uint256 haifuPrice;
-    }
 
     address public haifuFactory;
     address public matchingEngine;
@@ -66,47 +60,43 @@ contract HaifuLaunchpad is AccessControl, Initializable {
     }
 
     function commit(address haifu, address deposit, uint256 amount) external {
-        // check if sender is whitelisted
-        if (!IHaifu(haifu).isWhitelisted(msg.sender)) {
-            revert HaifuIsNotWhitelisted(haifu, msg.sender);
-        }
-
-        // check fund raising accepting ending date
-        uint256 acceptingExpiaryDate = IHaifu(haifu).fundAcceptingExpiaryDate();
-        if (block.timestamp > acceptingExpiaryDate) {
-            revert HaifuIsNotAccepting(
-                haifu,
-                acceptingExpiaryDate,
-                block.timestamp
-            );
-        }
-
+        _deposit(haifu, deposit, amount);
         // commit to fund
         IHaifu(haifu).commit(msg.sender, deposit, amount);
 
         emit HaifuCommit(haifu, deposit, amount);
     }
 
-    function withdraw(address haifu, address deposit, uint256 amount) external {
-        // check if sender has committed to fund
-        uint256 committed = IHaifu(haifu).getCommitted(msg.sender);
-        if (committed < amount) {
-            revert InvalidWithdrawAmount(amount, committed);
-        }
-        // check fund raising accepting ending date
-        uint256 acceptingExpiaryDate = IHaifu(haifu).fundAcceptingExpiaryDate();
-        if (block.timestamp > acceptingExpiaryDate) {
-            revert HaifuIsNotAccepting(
-                haifu,
-                acceptingExpiaryDate,
-                block.timestamp
-            );
-        }
+    function commitETH(address haifu) external payable {
+        // wrap ETH to WETH
+        require(msg.value > 0, "Amount is zero");
 
+        IWETH(WETH).deposit{value: msg.value}();
+        // commit to fund
+        IHaifu(haifu).commit(msg.sender, WETH, msg.value);
+
+        emit HaifuCommit(haifu, WETH, msg.value);
+    }
+
+    function commitHaifu(address haifu, uint256 amount) external {
+        // commit to fund
+        IHaifu(haifu).commitHaifu(msg.sender, amount);
+
+        emit HaifuCommit(haifu, HAIFU, amount);
+    }
+
+    function withdraw(address haifu, address deposit, uint256 amount) external {
         // withdraw from fund
         IHaifu(haifu).withdraw(msg.sender, deposit, amount);
 
         emit HaifuWithdraw(haifu, deposit, amount);
+    }
+
+    function withdrawHaifu(address haifu, uint256 amount) external {
+        // withdraw from fund
+        IHaifu(haifu).withdrawHaifu(msg.sender, amount);
+
+        emit HaifuWithdraw(haifu, HAIFU, amount);
     }
 
     function launchHaifu(string memory name, string memory symbol, IHaifu.State memory haifu) external onlyRole(CREATOR) {
@@ -115,11 +105,11 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         // Send to feeTo address
         TransferHelper.safeTransfer(HAIFU, feeTo, fee);
         // create haifu token
-        IHaifu(haifuFactory).createHaifu(name, symbol, haifu);
+        IHaifu(haifuFactory).createHaifu(name, symbol, msg.sender, haifu);
     }
 
     function openHaifu(address haifu) external onlyRole(CREATOR) {
-        HaifuInfo memory info = _getHaifuInfo(haifu);
+        IHaifu.HaifuOpenInfo memory info = _getHaifuInfo(haifu);
         _validateCreator(info.creator);
 
         if (IHaifu(haifu).isCapitalRaised()) {
@@ -132,15 +122,8 @@ contract HaifuLaunchpad is AccessControl, Initializable {
     // Internal function to retrieve Haifu info
     function _getHaifuInfo(
         address haifu
-    ) internal view returns (HaifuInfo memory) {
-        IHaifu.State memory state = IHaifu(haifu).info();
-        return
-            HaifuInfo({
-                creator: state.creator,
-                deposit: state.deposit,
-                depositPrice: state.depositPrice,
-                haifuPrice: state.haifuPrice
-            });
+    ) internal view returns (IHaifu.HaifuOpenInfo memory) {
+        return  IHaifu(haifu).openInfo(); 
     }
 
     // Internal function to validate the creator
@@ -153,7 +136,7 @@ contract HaifuLaunchpad is AccessControl, Initializable {
     // Internal function to handle capital raised scenario
     function _handleCapitalRaised(
         address haifu,
-        HaifuInfo memory info
+        IHaifu.HaifuOpenInfo memory info
     ) internal {
         IMatchingEngine(matchingEngine).addPair(
             haifu,
@@ -170,8 +153,7 @@ contract HaifuLaunchpad is AccessControl, Initializable {
             info.deposit
         );
 
-        uint256 haifuLeft = IHaifu(haifu).open();
-        TransferHelper.safeTransfer(haifu, info.creator, haifuLeft);
+        IHaifu(haifu).open();
     }
 
     function expireHaifu(
@@ -240,21 +222,9 @@ contract HaifuLaunchpad is AccessControl, Initializable {
                 amount
             );
         }
-        TransferHelper.safeTransfer(deposit, feeTo, fee);
+        // TransferHelper.safeTransfer(deposit, feeTo, fee);
 
         return (withoutCarry, pair);
-    }
-
-    function _carry(
-        address haifu,
-        uint256 amount,
-        address account,
-        bool isMaker
-    ) internal view returns (uint256 carryAmount) {
-        // get Carry from Haifu
-        uint256 carry = IHaifu(haifu).getCarry(account, amount, isMaker);
-        // calculate carry
-        return (amount * carry) / 100000000;
     }
 
     function _isContract(address _addr) private view returns (bool) {
