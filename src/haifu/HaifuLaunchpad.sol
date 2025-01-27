@@ -63,7 +63,7 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         _deposit(haifu, deposit, amount);
         // commit to fund
         IHaifu(haifu).commit(msg.sender, deposit, amount);
-
+        // TODO: finish event for indexers
         emit HaifuCommit(haifu, deposit, amount);
     }
 
@@ -74,38 +74,44 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         IWETH(WETH).deposit{value: msg.value}();
         // commit to fund
         IHaifu(haifu).commit(msg.sender, WETH, msg.value);
-
+        // TODO: finish event for indexers
         emit HaifuCommit(haifu, WETH, msg.value);
     }
 
     function commitHaifu(address haifu, uint256 amount) external {
         // commit to fund
         IHaifu(haifu).commitHaifu(msg.sender, amount);
-
+        // TODO: finish event for indexers
         emit HaifuCommit(haifu, HAIFU, amount);
     }
 
     function withdraw(address haifu, address deposit, uint256 amount) external {
         // withdraw from fund
         IHaifu(haifu).withdraw(msg.sender, deposit, amount);
-
+        // TODO: finish event for indexers
         emit HaifuWithdraw(haifu, deposit, amount);
     }
 
     function withdrawHaifu(address haifu, uint256 amount) external {
         // withdraw from fund
         IHaifu(haifu).withdrawHaifu(msg.sender, amount);
-
+        // TODO: finish event for indexers
         emit HaifuWithdraw(haifu, HAIFU, amount);
     }
 
-    function launchHaifu(string memory name, string memory symbol, IHaifu.State memory haifu) external onlyRole(CREATOR) {
+    function launchHaifu(
+        string memory name,
+        string memory symbol,
+        IHaifu.State memory haifu
+    ) external onlyRole(CREATOR) {
         // Pay $HAIFU token creation fee
         TransferHelper.safeTransferFrom(HAIFU, msg.sender, address(this), fee);
         // Send to feeTo address
         TransferHelper.safeTransfer(HAIFU, feeTo, fee);
         // create haifu token
         IHaifu(haifuFactory).createHaifu(name, symbol, msg.sender, haifu);
+
+        // TODO: finish event for indexers
     }
 
     function openHaifu(address haifu) external onlyRole(CREATOR) {
@@ -117,13 +123,15 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         } else {
             IHaifu(haifu).expire(info.deposit);
         }
+
+        // TODO: finish event for indexers
     }
 
     // Internal function to retrieve Haifu info
     function _getHaifuInfo(
         address haifu
     ) internal view returns (IHaifu.HaifuOpenInfo memory) {
-        return  IHaifu(haifu).openInfo(); 
+        return IHaifu(haifu).openInfo();
     }
 
     // Internal function to validate the creator
@@ -167,6 +175,8 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         }
         // expire haifu's managing assets to distribute pro-rata funds to investors
         IHaifu(haifu).expire(managingAsset);
+
+        // TODO: finish event for indexers
     }
 
     function trackExpiary(
@@ -183,6 +193,8 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         TransferHelper.safeTransfer(haifu, haifu, amount);
         // claim expiary to receive $HAIFU from haifu token supply, the token contract will send $HAIFU to the sender
         IHaifu(haifu).claimExpiary(amount);
+
+        // TODO: finish event for indexers
     }
 
     /**
