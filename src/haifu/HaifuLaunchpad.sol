@@ -8,6 +8,7 @@ import {IWETH} from "../interfaces/IWETH.sol";
 import "../libraries/TransferHelper.sol";
 import {IMatchingEngine} from "@standardweb3/exchange/interfaces/IMatchingEngine.sol";
 
+// HaifuLaunchpad is a MARKET_MAKER
 contract HaifuLaunchpad is AccessControl, Initializable {
     // Define roles
     bytes32 public constant CREATOR = keccak256("CREATOR");
