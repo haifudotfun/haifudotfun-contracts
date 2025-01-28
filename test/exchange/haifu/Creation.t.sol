@@ -442,7 +442,6 @@ contract HaifuCreationTest is BaseSetup {
 
         utils.setTime(1100001);
 
-
         launchpad.expireHaifu(haifu, address(weth));
     }
 
