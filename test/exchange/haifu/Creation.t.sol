@@ -525,7 +525,6 @@ contract HaifuCreationTest is BaseSetup {
         // expire Haifu
         launchpad.expireHaifu(haifu, address(weth));
 
-
         IERC20(haifu).approve(address(launchpad), 10000e18);
         launchpad.claimExpiary(haifu, 1e15);
     }

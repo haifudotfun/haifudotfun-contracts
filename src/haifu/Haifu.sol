@@ -214,9 +214,15 @@ contract Haifu is ERC20, AccessControl, Initializable {
         return (depositOrderInfo, haifuOrderInfo, leftHaifu);
     }
 
-    function expire(address expiringAsset) external onlyLaunchpad returns (IHaifu.OrderInfo memory expireOrderInfo, bool expiredEarly) {
+    function expire(address expiringAsset)
+        external
+        onlyLaunchpad
+        returns (IHaifu.OrderInfo memory expireOrderInfo, bool expiredEarly)
+    {
         expiredEarly = (info.raised < info.goal) && (block.timestamp >= info.fundAcceptingExpiaryDate);
-        require(block.timestamp > info.fundExpiaryDate || expiredEarly, "Haifu is not expired and fundraised with success");
+        require(
+            block.timestamp > info.fundExpiaryDate || expiredEarly, "Haifu is not expired and fundraised with success"
+        );
         // call Expire function to the fund manager to claim back the asset
         uint256 redeemed;
 
