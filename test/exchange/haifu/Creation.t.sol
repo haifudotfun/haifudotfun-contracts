@@ -404,6 +404,7 @@ contract HaifuCreationTest is BaseSetup {
 
         utils.setTime(1200001);
 
+        vm.expectRevert();
         launchpad.expireHaifu(haifu, address(weth));
     }
 
@@ -440,6 +441,7 @@ contract HaifuCreationTest is BaseSetup {
         launchpad.commit(haifu, address(weth), 1e18);
 
         utils.setTime(1100001);
+
 
         launchpad.expireHaifu(haifu, address(weth));
     }
