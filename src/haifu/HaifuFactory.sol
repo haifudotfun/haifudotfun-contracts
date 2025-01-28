@@ -50,10 +50,8 @@ contract HaifuFactory is Initializable {
             revert HaifuAlreadyExists(name, symbol, creator);
         }
 
-        address proxy = CloneFactory._createCloneWithSaltAndConstructorArgs(
-            impl, abi.encode(name, symbol), _getSalt(name, symbol, creator)
-        );
-        IHaifu(proxy).initialize(matchingEngine, creator, haifu);
+        address proxy = CloneFactory._createCloneWithSalt(impl, _getSalt(name, symbol, creator));
+        IHaifu(proxy).initialize(name, symbol, matchingEngine, launchpad, creator, haifu);
         allHaifus.push(proxy);
         return (proxy);
     }

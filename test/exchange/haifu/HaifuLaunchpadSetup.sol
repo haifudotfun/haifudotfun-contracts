@@ -7,13 +7,16 @@ import {MockBase} from "@standardweb3/mock/MockBase.sol";
 import {MockQuote} from "@standardweb3/mock/MockQuote.sol";
 import {MockBTC} from "@standardweb3/mock/MockBTC.sol";
 import {ErrToken} from "@standardweb3/mock/MockTokenOver18Decimals.sol";
-import {Utils} from "../utils/Utils.sol";
+import {Utils} from "../../utils/Utils.sol";
 import {MatchingEngine} from "@standardweb3/exchange/MatchingEngine.sol";
 import {OrderbookFactory} from "@standardweb3/exchange/orderbooks/OrderbookFactory.sol";
 import {Orderbook} from "@standardweb3/exchange/orderbooks/Orderbook.sol";
 import {ExchangeOrderbook} from "@standardweb3/exchange/libraries/ExchangeOrderbook.sol";
 import {IOrderbookFactory} from "@standardweb3/exchange/interfaces/IOrderbookFactory.sol";
 import {WETH9} from "@standardweb3/mock/WETH9.sol";
+import {HaifuToken} from "../../../../src/haifu/HaifuToken.sol";
+import {HaifuLaunchpad} from "../../../../src/haifu/HaifuLaunchpad.sol";
+import {HaifuFactory} from "../../../../src/haifu/HaifuFactory.sol";
 
 contract BaseSetup is Test {
     Utils public utils;
@@ -30,6 +33,9 @@ contract BaseSetup is Test {
     address public trader2;
     address public booker;
     address public attacker;
+    HaifuLaunchpad public launchpad;
+    HaifuFactory public haifuFactory;
+    HaifuToken public HAIFU;
 
     function setUp() public virtual {
         utils = new Utils();
@@ -78,6 +84,28 @@ contract BaseSetup is Test {
         btc.approve(address(matchingEngine), 10000e8);
         vm.prank(booker);
         feeToken.approve(address(matchingEngine), 40000e18);
+
+        // setup launchpad
+        HAIFU = new HaifuToken();
+        launchpad = new HaifuLaunchpad();
+        haifuFactory = new HaifuFactory();
+
+        launchpad.initialize(
+            address(haifuFactory),
+            address(matchingEngine),
+            address(weth),
+            address(HAIFU),
+            address(booker),
+            0,
+            10000 * 1e18
+        );
+
+        haifuFactory.initialize(address(launchpad), address(matchingEngine));
+
+        bytes32 MARKET_MAKER_ROLE = keccak256("MARKET_MAKER_ROLE");
+
+        // grant MARKET_MAKER_ROLE to launchpad
+        matchingEngine.grantRole(MARKET_MAKER_ROLE, address(launchpad));
     }
 
     function _showOrderbook(address base, address quote) internal view {

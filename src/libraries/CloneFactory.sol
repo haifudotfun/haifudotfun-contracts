@@ -89,28 +89,6 @@ library CloneFactory {
         }
     }
 
-    function _createCloneWithSaltAndConstructorArgs(
-        address target,
-        /// abi.encode(...) the constructor arguments with types
-        bytes memory constructorArgs,
-        bytes32 salt
-    ) internal returns (address result) {
-        bytes memory clone;
-        bytes20 targetBytes = bytes20(target);
-        assembly {
-            clone := mload(0x40)
-            mstore(clone, 0x3d602d80600a3d3981f3363d3d373d3d3d363d73000000000000000000000000)
-            mstore(add(clone, 0x14), targetBytes)
-            mstore(add(clone, 0x28), 0x5af43d82803e903d91602b57fd5bf30000000000000000000000000000000000)
-        }
-        clone = abi.encodePacked(clone, constructorArgs);
-        assembly {
-            // Use create2 with the provided salt
-            result := create2(0, add(clone, 0x20), mload(clone), salt)
-            if iszero(extcodesize(result)) { revert(0, 0) }
-        }
-    }
-
     function predictAddressWithSalt(address deployer, address target, bytes32 salt) internal pure returns (address) {
         // Create the expected bytecode of the minimal proxy
         bytes memory bytecode =
