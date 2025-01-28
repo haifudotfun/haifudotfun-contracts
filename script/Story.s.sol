@@ -9,7 +9,7 @@ import {MatchingEngine} from "@standardweb3/exchange/MatchingEngine.sol";
 
 contract Deployer is Script {
     function _setDeployer() internal {
-        uint256 deployerPrivateKey = vm.envUint("LINEA_TESTNET_DEPLOYER_KEY");
+        uint256 deployerPrivateKey = vm.envUint("LAUNCHPAD_DEPLOYER_KEY");
         vm.startBroadcast(deployerPrivateKey);
     }
 }
