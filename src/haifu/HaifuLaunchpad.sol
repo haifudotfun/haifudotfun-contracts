@@ -201,6 +201,10 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         return true;
     }
 
+    function setConfig(address haifu, IHaifu.Config memory config) external onlyRole(CREATOR) {
+        IHaifu(haifu).setConfig(msg.sender, config);
+    }
+
     function switchWhitelist(address haifu, bool isWhitelisted) external onlyRole(CREATOR) returns (bool) {
         IHaifu(haifu).switchWhitelist(msg.sender, isWhitelisted);
         emit HaifuSwitchWhitelist(haifu, isWhitelisted);

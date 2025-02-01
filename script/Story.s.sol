@@ -16,6 +16,7 @@ contract Deployer is Script {
 
 contract DeployLaunchpad is Deployer {
     function run() public {
+        _setDeployer();
         HaifuLaunchpad launchpad;
         HaifuToken HAIFU;
         HaifuFactory haifuFactory;

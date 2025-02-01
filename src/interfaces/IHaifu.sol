@@ -2,6 +2,19 @@
 pragma solidity ^0.8.24;
 
 interface IHaifu {
+    struct Config {
+        uint256 totalSupply;
+        address fundManager;
+        uint256 carry;
+        address deposit;
+        uint256 depositPrice;
+        uint256 goal;
+        uint256 haifuPrice;
+        uint256 haifuGoal;
+        uint256 fundAcceptingExpiaryDate;
+        uint256 fundExpiaryDate;
+    }
+
     struct State {
         uint256 totalSupply;
         // carry in fraction of 1e8
@@ -37,6 +50,8 @@ interface IHaifu {
     function switchWhitelist(address sender, bool status) external;
 
     function setWhitelist(address sender, address account, bool status) external;
+
+    function setConfig(address sender, Config memory config) external;
 
     function isWhitelisted(address account) external view returns (bool);
 

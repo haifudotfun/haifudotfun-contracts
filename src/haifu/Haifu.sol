@@ -86,6 +86,22 @@ contract Haifu is ERC20, AccessControl, Initializable {
         });
     }
 
+    function setConfig(address sender, IHaifu.Config memory config) public onlyLaunchpad {
+        require(sender == creator, "Caller is not creator");
+        require(config.totalSupply > totalSupply(), "New Total Supply should be greater than current");
+        info.totalSupply = config.totalSupply;
+        info.fundManager = config.fundManager;
+        info.carry = config.carry;
+        info.deposit = config.deposit;
+        info.depositPrice = config.depositPrice;
+        info.goal = config.goal;
+        info.haifuPrice = config.haifuPrice;
+        info.haifuGoal = config.haifuGoal;
+        require(config.fundAcceptingExpiaryDate <= config.fundExpiaryDate, "Fund accepting expiary date is invalid");
+        info.fundAcceptingExpiaryDate = config.fundAcceptingExpiaryDate;
+        info.fundExpiaryDate = config.fundExpiaryDate;
+    }
+
     function setWhitelist(address sender, address account, bool status) public onlyLaunchpad {
         require(sender == creator, "Caller is not creator");
         if (status) {
