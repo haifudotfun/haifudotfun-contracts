@@ -37,6 +37,7 @@ contract HaifuLaunchpad is AccessControl, Initializable {
     event HaifuTrackExpiary(address haifu, address managingAsset, IHaifu.OrderInfo orderInfo);
     event HaifuWhitelisted(address haifu, address account, bool isWhitelisted);
     event HaifuSwitchWhitelist(address haifu, bool isWhitelisted);
+    event HaifuConfig(address haifu, IHaifu.Config config);
 
     // Investment
     event HaifuDeposit(address sender, address haifu, uint256 carry);
@@ -201,8 +202,10 @@ contract HaifuLaunchpad is AccessControl, Initializable {
         return true;
     }
 
-    function setConfig(address haifu, IHaifu.Config memory config) external onlyRole(CREATOR) {
+    function setConfig(address haifu, IHaifu.Config memory config) external onlyRole(CREATOR) returns (bool) {
         IHaifu(haifu).setConfig(msg.sender, config);
+        emit HaifuConfig(haifu, config);
+        return true;
     }
 
     function switchWhitelist(address haifu, bool isWhitelisted) external onlyRole(CREATOR) returns (bool) {
