@@ -23,13 +23,11 @@ interface IHaifu {
         address deposit;
         // {haifu token} / {deposit token}
         uint256 depositPrice;
-        uint256 raised;
         uint256 goal;
         address HAIFU;
         // {haifu token} / {$HAIFU}
         uint256 haifuPrice;
         uint256 haifuGoal;
-        uint256 haifuRaised;
         uint256 fundAcceptingExpiaryDate;
         uint256 fundExpiaryDate;
     }

@@ -40,13 +40,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 1000000e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -67,13 +65,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 1000000e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -99,13 +95,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 1000000e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -133,13 +127,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 1000000e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -168,13 +160,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 1000000e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -206,13 +196,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 1000000e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -246,13 +234,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 1000000e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -276,13 +262,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 1000000e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -306,13 +290,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 10e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -343,13 +325,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 10e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -383,13 +363,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 10e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -421,13 +399,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 10e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -458,13 +434,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 10e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });
@@ -497,13 +471,11 @@ contract HaifuCreationTest is BaseSetup {
             deposit: address(weth),
             // {haifu token} / {deposit token}
             depositPrice: 1000e8,
-            raised: 0,
             goal: 10e18,
             HAIFU: address(HAIFU),
             // {haifu token} / {$HAIFU}
             haifuPrice: 1000e8,
             haifuGoal: 1000000e18,
-            haifuRaised: 0,
             fundAcceptingExpiaryDate: 1100000,
             fundExpiaryDate: 1200000
         });

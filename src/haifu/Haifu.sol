@@ -21,6 +21,8 @@ contract Haifu is ERC20, AccessControl, Initializable {
     string private _symbol;
     address public launchpad;
     bool public isWhitelisted;
+    uint256 public raised;
+    uint256 public haifuRaised;
 
     constructor() ERC20("", "") {}
 
@@ -73,10 +75,6 @@ contract Haifu is ERC20, AccessControl, Initializable {
         return info.fundManager;
     }
 
-    function raised() external view returns (uint256) {
-        return info.raised;
-    }
-
     function openInfo() external view returns (IHaifu.HaifuOpenInfo memory) {
         return IHaifu.HaifuOpenInfo({
             creator: creator,
@@ -125,8 +123,8 @@ contract Haifu is ERC20, AccessControl, Initializable {
             require(!hasRole(WHITELIST, sender), "Caller is whitelisted");
         }
         require(info.fundAcceptingExpiaryDate > block.timestamp, "Fund raising is expired");
-        require(info.haifuRaised + amount <= info.haifuGoal, "Goal reached");
-        info.haifuRaised += amount;
+        require(haifuRaised + amount <= info.haifuGoal, "Goal reached");
+        haifuRaised += amount;
         // convert deposit to haifu with depositPrice
         haifuTAmount = (amount * 1e8) / info.haifuPrice;
         TransferHelper.safeTransfer(address(this), sender, haifuTAmount);
@@ -143,8 +141,8 @@ contract Haifu is ERC20, AccessControl, Initializable {
             require(hasRole(WHITELIST, sender), "Caller is not whitelisted");
         }
         require(info.fundAcceptingExpiaryDate > block.timestamp, "Fund raising is expired");
-        require(info.raised + amount <= info.goal, "Goal reached");
-        info.raised += amount;
+        require(raised + amount <= info.goal, "Goal reached");
+        raised += amount;
         // convert deposit to haifu with depositPrice
         uint256 depositDecimal = TransferHelper.decimals(deposit);
         if (depositDecimal > 18) {
@@ -164,8 +162,8 @@ contract Haifu is ERC20, AccessControl, Initializable {
         // deposit is obviously haifu token
         // get converted haifu token to deposit amount
         haifuAmount = (amount * info.haifuPrice) / 1e8;
-        require(info.haifuRaised - haifuAmount >= 0, "Not enough deposit");
-        info.haifuRaised -= amount;
+        require(haifuRaised - haifuAmount >= 0, "Not enough deposit");
+        haifuRaised -= amount;
         TransferHelper.safeTransfer(info.HAIFU, sender, haifuAmount);
         return (info.HAIFU, haifuAmount);
     }
@@ -186,14 +184,14 @@ contract Haifu is ERC20, AccessControl, Initializable {
             revert DepositWithMoreThan18Decimals(depositDecimal);
         }
         depositAmount = ((amount * info.depositPrice) / 1e8 / decDiff);
-        require(info.raised - depositAmount >= 0, "Not enough deposit");
-        info.raised -= depositAmount;
+        require(raised - depositAmount >= 0, "Not enough deposit");
+        raised -= depositAmount;
         TransferHelper.safeTransfer(info.deposit, sender, depositAmount);
         return (info.deposit, depositAmount);
     }
 
     function isCapitalRaised() external view returns (bool) {
-        return info.raised >= info.goal;
+        return raised >= info.goal;
     }
 
     function open()
@@ -235,7 +233,7 @@ contract Haifu is ERC20, AccessControl, Initializable {
         onlyLaunchpad
         returns (IHaifu.OrderInfo memory expireOrderInfo, bool expiredEarly)
     {
-        expiredEarly = (info.raised < info.goal) && (block.timestamp >= info.fundAcceptingExpiaryDate);
+        expiredEarly = (raised < info.goal) && (block.timestamp >= info.fundAcceptingExpiaryDate);
         require(
             block.timestamp > info.fundExpiaryDate || expiredEarly, "Haifu is not expired and fundraised with success"
         );
@@ -281,7 +279,7 @@ contract Haifu is ERC20, AccessControl, Initializable {
         onlyLaunchpad
         returns (address claim, uint256 claimed, bool expiredEarly)
     {
-        expiredEarly = (info.raised < info.goal) && (block.timestamp >= info.fundAcceptingExpiaryDate);
+        expiredEarly = (raised < info.goal) && (block.timestamp >= info.fundAcceptingExpiaryDate);
         // deposit is obviously haifu token
         require(block.timestamp >= info.fundExpiaryDate || expiredEarly, "Fund is not expired");
         claim = expiredEarly ? info.deposit : info.HAIFU;

@@ -40,7 +40,6 @@ contract HaifuLaunchpad is AccessControl, Initializable {
     event HaifuConfig(address haifu, IHaifu.Config config);
 
     // Investment
-    event HaifuDeposit(address sender, address haifu, uint256 carry);
     event HaifuCommit(
         address haifu,
         address sender,
