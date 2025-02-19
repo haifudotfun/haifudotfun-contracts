@@ -14,10 +14,10 @@ contract Deployer is Script {
     }
 }
 
-contract DeployLaunchpad is Deployer {
+contract DeploywAifuManager is Deployer {
     function run() public {
         _setDeployer();
-        wAIfuManager launchpad;
+        wAIfuManager manager;
         Haifu HAIFU;
         wAIfuFactory waifuFactory;
         MatchingEngine matchingEngine = MatchingEngine(payable(0x8E9e786f757B881C7B456682Ae7D2a06820220b1));
@@ -28,10 +28,10 @@ contract DeployLaunchpad is Deployer {
         address wAIfuFactory_address = 0x627a2Db2b4caDb68AAd2306317CF3B027C29341b;
 
         HAIFU = new Haifu();
-        launchpad = new wAIfuManager();
+        manager = new wAIfuManager();
         waifuFactory = new wAIfuFactory();
 
-        launchpad.initialize(
+        manager.initialize(
             address(waifuFactory),
             address(matchingEngine),
             address(weth),
@@ -41,11 +41,11 @@ contract DeployLaunchpad is Deployer {
             10000 * 1e18
         );
 
-        waifuFactory.initialize(address(launchpad), address(matchingEngine));
+        waifuFactory.initialize(address(manager), address(matchingEngine));
 
         bytes32 MARKET_MAKER_ROLE = keccak256("MARKET_MAKER_ROLE");
 
-        // grant MARKET_MAKER_ROLE to launchpad
-        matchingEngine.grantRole(MARKET_MAKER_ROLE, address(launchpad));
+        // grant MARKET_MAKER_ROLE to manager
+        matchingEngine.grantRole(MARKET_MAKER_ROLE, address(manager));
     }
 }
