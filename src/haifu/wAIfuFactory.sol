@@ -14,7 +14,7 @@ contract wAIfuFactory is Initializable {
     // Orderbooks
     address[] public allwAIfus;
     /// Address of manager
-    address public haifuManager;
+    address public wAIfuManager;
     /// Address of matching engine
     address public matchingEngine;
     /// version number of impl
@@ -33,8 +33,8 @@ contract wAIfuFactory is Initializable {
         external
         returns (address wAIfu)
     {
-        if (msg.sender != haifuManager) {
-            revert InvalidAccess(msg.sender, haifuManager);
+        if (msg.sender != wAIfuManager) {
+            revert InvalidAccess(msg.sender, wAIfuManager);
         }
 
         wAIfu = _predictAddress(name, symbol, creator);
@@ -51,7 +51,7 @@ contract wAIfuFactory is Initializable {
         }
 
         wAIfu = CloneFactory._createCloneWithSalt(impl, _getSalt(name, symbol, creator));
-        IHaifu(wAIfu).initialize(name, symbol, matchingEngine, haifuManager, creator, wAIfuInfo);
+        IHaifu(wAIfu).initialize(name, symbol, matchingEngine, wAIfuManager, creator, wAIfuInfo);
         allwAIfus.push(wAIfu);
         return (wAIfu);
     }
@@ -62,11 +62,11 @@ contract wAIfuFactory is Initializable {
 
     /**
      * @dev Initialize orderbook factory contract with engine address, reinitialize if engine is reset.
-     * @param haifuManager_ The address of the engine contract
+     * @param wAIfuManager_ The address of the engine contract
      * @return address of pair implementation contract
      */
-    function initialize(address haifuManager_, address matchingEngine_) public initializer returns (address) {
-        haifuManager = haifuManager_;
+    function initialize(address wAIfuManager_, address matchingEngine_) public initializer returns (address) {
+        wAIfuManager = wAIfuManager_;
         matchingEngine = matchingEngine_;
         _createImpl();
         return impl;

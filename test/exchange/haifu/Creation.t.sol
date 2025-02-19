@@ -14,7 +14,7 @@ import {Orderbook} from "@standardweb3/exchange/orderbooks/Orderbook.sol";
 import {ExchangeOrderbook} from "@standardweb3/exchange/libraries/ExchangeOrderbook.sol";
 import {IOrderbookFactory} from "@standardweb3/exchange/interfaces/IOrderbookFactory.sol";
 import {WETH9} from "@standardweb3/mock/WETH9.sol";
-import {BaseSetup} from "./HaifuManagerSetup.sol";
+import {BaseSetup} from "./wAIfuManagerSetup.sol";
 import {console} from "forge-std/console.sol";
 import {stdStorage, StdStorage, Test} from "forge-std/Test.sol";
 import {IHaifu} from "../../../../src/interfaces/IHaifu.sol";

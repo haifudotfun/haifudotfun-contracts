@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import {Script, console} from "forge-std/Script.sol";
 import {Haifu} from "../src/haifu/Haifu.sol";
-import {HaifuManager} from "../src/haifu/HaifuManager.sol";
+import {wAIfuManager} from "../src/haifu/wAIfuManager.sol";
 import {wAIfuFactory} from "../src/haifu/wAIfuFactory.sol";
 import {MatchingEngine} from "@standardweb3/exchange/MatchingEngine.sol";
 
@@ -17,7 +17,7 @@ contract Deployer is Script {
 contract DeployLaunchpad is Deployer {
     function run() public {
         _setDeployer();
-        HaifuManager launchpad;
+        wAIfuManager launchpad;
         Haifu HAIFU;
         wAIfuFactory waifuFactory;
         MatchingEngine matchingEngine = MatchingEngine(payable(0x39800D00B0573317E8EABA8BFce1c71a59fD26ee));
@@ -25,7 +25,7 @@ contract DeployLaunchpad is Deployer {
         address feeTo = 0xF8FB4672170607C95663f4Cc674dDb1386b7CfE0;
 
         HAIFU = new Haifu();
-        launchpad = new HaifuManager();
+        launchpad = new wAIfuManager();
         waifuFactory = new wAIfuFactory();
 
         launchpad.initialize(

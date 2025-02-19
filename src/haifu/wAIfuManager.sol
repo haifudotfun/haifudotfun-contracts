@@ -14,8 +14,8 @@ interface IRevenue {
     function isSubscribed(address account) external view returns (bool isSubscribed);
 }
 
-// HaifuManager is a MARKET_MAKER
-contract HaifuManager is AccessControl, Initializable {
+// wAIfuManager is a MARKET_MAKER
+contract wAIfuManager is AccessControl, Initializable {
     // Define roles
     bytes32 public constant CREATOR = keccak256("CREATOR");
     uint256 constant DENOM = 1e8;

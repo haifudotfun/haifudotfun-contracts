@@ -16,7 +16,7 @@ import {IOrderbookFactory} from "@standardweb3/exchange/interfaces/IOrderbookFac
 import {WETH9} from "@standardweb3/mock/WETH9.sol";
 import {Haifu} from "../../../../src/haifu/Haifu.sol";
 import {wAIfu} from "../../../../src/haifu/wAIfu.sol";
-import {HaifuManager} from "../../../../src/haifu/HaifuManager.sol";
+import {wAIfuManager} from "../../../../src/haifu/wAIfuManager.sol";
 import {wAIfuFactory} from "../../../../src/haifu/wAIfuFactory.sol";
 
 contract BaseSetup is Test {
@@ -34,7 +34,7 @@ contract BaseSetup is Test {
     address public trader2;
     address public booker;
     address public attacker;
-    HaifuManager public launchpad;
+    wAIfuManager public launchpad;
     wAIfuFactory public waifuFactory;
     Haifu public HAIFU;
 
@@ -88,7 +88,7 @@ contract BaseSetup is Test {
 
         // setup launchpad
         HAIFU = new Haifu();
-        launchpad = new HaifuManager();
+        launchpad = new wAIfuManager();
         waifuFactory = new wAIfuFactory();
 
         launchpad.initialize(
