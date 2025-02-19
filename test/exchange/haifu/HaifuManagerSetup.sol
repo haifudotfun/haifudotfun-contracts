@@ -14,9 +14,10 @@ import {Orderbook} from "@standardweb3/exchange/orderbooks/Orderbook.sol";
 import {ExchangeOrderbook} from "@standardweb3/exchange/libraries/ExchangeOrderbook.sol";
 import {IOrderbookFactory} from "@standardweb3/exchange/interfaces/IOrderbookFactory.sol";
 import {WETH9} from "@standardweb3/mock/WETH9.sol";
-import {HaifuToken} from "../../../../src/haifu/HaifuToken.sol";
-import {HaifuLaunchpad} from "../../../../src/haifu/HaifuLaunchpad.sol";
-import {HaifuFactory} from "../../../../src/haifu/HaifuFactory.sol";
+import {Haifu} from "../../../../src/haifu/Haifu.sol";
+import {wAIfu} from "../../../../src/haifu/wAIfu.sol";
+import {HaifuManager} from "../../../../src/haifu/HaifuManager.sol";
+import {wAIfuFactory} from "../../../../src/haifu/wAIfuFactory.sol";
 
 contract BaseSetup is Test {
     Utils public utils;
@@ -33,9 +34,9 @@ contract BaseSetup is Test {
     address public trader2;
     address public booker;
     address public attacker;
-    HaifuLaunchpad public launchpad;
-    HaifuFactory public haifuFactory;
-    HaifuToken public HAIFU;
+    HaifuManager public launchpad;
+    wAIfuFactory public waifuFactory;
+    Haifu public HAIFU;
 
     function setUp() public virtual {
         utils = new Utils();
@@ -86,12 +87,12 @@ contract BaseSetup is Test {
         feeToken.approve(address(matchingEngine), 40000e18);
 
         // setup launchpad
-        HAIFU = new HaifuToken();
-        launchpad = new HaifuLaunchpad();
-        haifuFactory = new HaifuFactory();
+        HAIFU = new Haifu();
+        launchpad = new HaifuManager();
+        waifuFactory = new wAIfuFactory();
 
         launchpad.initialize(
-            address(haifuFactory),
+            address(waifuFactory),
             address(matchingEngine),
             address(weth),
             address(HAIFU),
@@ -100,7 +101,7 @@ contract BaseSetup is Test {
             10000 * 1e18
         );
 
-        haifuFactory.initialize(address(launchpad), address(matchingEngine));
+        waifuFactory.initialize(address(launchpad), address(matchingEngine));
 
         bytes32 MARKET_MAKER_ROLE = keccak256("MARKET_MAKER_ROLE");
 

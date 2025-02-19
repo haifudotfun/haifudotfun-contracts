@@ -14,7 +14,7 @@ import {Orderbook} from "@standardweb3/exchange/orderbooks/Orderbook.sol";
 import {ExchangeOrderbook} from "@standardweb3/exchange/libraries/ExchangeOrderbook.sol";
 import {IOrderbookFactory} from "@standardweb3/exchange/interfaces/IOrderbookFactory.sol";
 import {WETH9} from "@standardweb3/mock/WETH9.sol";
-import {BaseSetup} from "./HaifuLaunchpadSetup.sol";
+import {BaseSetup} from "./HaifuManagerSetup.sol";
 import {console} from "forge-std/console.sol";
 import {stdStorage, StdStorage, Test} from "forge-std/Test.sol";
 import {IHaifu} from "../../../../src/interfaces/IHaifu.sol";
@@ -50,7 +50,7 @@ contract HaifuCreationTest is BaseSetup {
         });
 
         // create haifu
-        launchpad.launchHaifu("Haifu", "HAI", state);
+        launchpad.launchwAIfu("Haifu", "HAI", state);
     }
 
     // test created haifu name and symbol matches the argument
@@ -75,7 +75,7 @@ contract HaifuCreationTest is BaseSetup {
         });
 
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         // check haifu name and symbol
         assertEq(IERC20(haifu).name(), "Haifu");
@@ -104,7 +104,7 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         launchpad.setWhitelist(haifu, address(this), true);
 
@@ -136,7 +136,7 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         launchpad.setWhitelist(haifu, address(this), true);
 
@@ -169,7 +169,7 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         launchpad.setWhitelist(haifu, address(this), true);
 
@@ -205,7 +205,7 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         launchpad.setWhitelist(haifu, address(this), true);
 
@@ -243,10 +243,10 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         vm.expectRevert();
-        launchpad.openHaifu(haifu);
+        launchpad.openwAIfu(haifu);
     }
 
     // test if open reverts in haifu after accepting fund phase with failure
@@ -271,10 +271,10 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         vm.expectRevert();
-        launchpad.openHaifu(haifu);
+        launchpad.openwAIfu(haifu);
     }
 
     // test if open works in haifu after accepting fund phase with success
@@ -299,7 +299,7 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         launchpad.setWhitelist(haifu, address(this), true);
         // commit with success
@@ -309,7 +309,7 @@ contract HaifuCreationTest is BaseSetup {
 
         utils.setTime(1100001);
 
-        launchpad.openHaifu(haifu);
+        launchpad.openwAIfu(haifu);
     }
 
     // test if expire reverts before fund expiary date on successful fundraise
@@ -334,7 +334,7 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         launchpad.setWhitelist(haifu, address(this), true);
         // commit with success
@@ -347,7 +347,7 @@ contract HaifuCreationTest is BaseSetup {
         IHaifu(haifu).raised();
 
         vm.expectRevert();
-        launchpad.expireHaifu(haifu, address(weth));
+        launchpad.expirewAIfu(haifu, address(weth));
     }
 
     // test if expire works after fund expiary date
@@ -372,7 +372,7 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         launchpad.setWhitelist(haifu, address(this), true);
         // commit with success
@@ -383,7 +383,7 @@ contract HaifuCreationTest is BaseSetup {
         utils.setTime(1200001);
 
         vm.expectRevert();
-        launchpad.expireHaifu(haifu, address(weth));
+        launchpad.expirewAIfu(haifu, address(weth));
     }
 
     // test if expire works after fund expiary date with failure
@@ -408,7 +408,7 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         launchpad.setWhitelist(haifu, address(this), true);
         // commit with failure
@@ -418,7 +418,7 @@ contract HaifuCreationTest is BaseSetup {
 
         utils.setTime(1100001);
 
-        launchpad.expireHaifu(haifu, address(weth));
+        launchpad.expirewAIfu(haifu, address(weth));
     }
 
     // test if claim does not work before fund expiary date
@@ -443,7 +443,7 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         // set whitelist
         launchpad.setWhitelist(haifu, address(this), true);
@@ -480,7 +480,7 @@ contract HaifuCreationTest is BaseSetup {
             fundExpiaryDate: 1200000
         });
         // create haifu
-        address haifu = launchpad.launchHaifu("Haifu", "HAI", state);
+        address haifu = launchpad.launchwAIfu("Haifu", "HAI", state);
 
         // set whitelist
         launchpad.setWhitelist(haifu, address(this), true);
@@ -493,10 +493,10 @@ contract HaifuCreationTest is BaseSetup {
         // open Haifu
         utils.setTime(1100001);
         vm.expectRevert();
-        launchpad.openHaifu(haifu);
+        launchpad.openwAIfu(haifu);
 
         // expire Haifu
-        launchpad.expireHaifu(haifu, address(weth));
+        launchpad.expirewAIfu(haifu, address(weth));
 
         IERC20(haifu).approve(address(launchpad), 10000e18);
         launchpad.claimExpiary(haifu, 1e15);

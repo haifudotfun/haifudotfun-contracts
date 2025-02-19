@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.24;
 
-import {Haifu, IHaifu} from "./Haifu.sol";
+import {wAIfu, IHaifu} from "./wAIfu.sol";
 import {CloneFactory} from "../libraries/CloneFactory.sol";
 import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {IHaifu} from "../interfaces/IHaifu.sol";
@@ -10,11 +10,11 @@ interface IERC20 {
     function symbol() external view returns (string memory);
 }
 
-contract HaifuFactory is Initializable {
+contract wAIfuFactory is Initializable {
     // Orderbooks
-    address[] public allHaifus;
+    address[] public allwAIfus;
     /// Address of manager
-    address public launchpad;
+    address public haifuManager;
     /// Address of matching engine
     address public matchingEngine;
     /// version number of impl
@@ -25,35 +25,35 @@ contract HaifuFactory is Initializable {
     mapping(address => uint256) public listingCosts;
 
     error InvalidAccess(address sender, address allowed);
-    error HaifuAlreadyExists(string name, string symbol, address creator);
+    error wAIfuAlreadyExists(string name, string symbol, address creator);
 
     constructor() {}
 
-    function createHaifu(string memory name, string memory symbol, address creator, IHaifu.State memory haifu)
+    function createHaifu(string memory name, string memory symbol, address creator, IHaifu.State memory wAIfuInfo)
         external
-        returns (address ai)
+        returns (address wAIfu)
     {
-        if (msg.sender != launchpad) {
-            revert InvalidAccess(msg.sender, launchpad);
+        if (msg.sender != haifuManager) {
+            revert InvalidAccess(msg.sender, haifuManager);
         }
 
-        address hfu = _predictAddress(name, symbol, creator);
+        wAIfu = _predictAddress(name, symbol, creator);
 
         // Check if the address has code
         uint32 size;
         assembly {
-            size := extcodesize(hfu)
+            size := extcodesize(wAIfu)
         }
 
         // If the address has code and it's a clone of impl, revert.
-        if (size > 0 || CloneFactory._isClone(impl, hfu)) {
-            revert HaifuAlreadyExists(name, symbol, creator);
+        if (size > 0 || CloneFactory._isClone(impl, wAIfu)) {
+            revert wAIfuAlreadyExists(name, symbol, creator);
         }
 
-        address proxy = CloneFactory._createCloneWithSalt(impl, _getSalt(name, symbol, creator));
-        IHaifu(proxy).initialize(name, symbol, matchingEngine, launchpad, creator, haifu);
-        allHaifus.push(proxy);
-        return (proxy);
+        wAIfu = CloneFactory._createCloneWithSalt(impl, _getSalt(name, symbol, creator));
+        IHaifu(wAIfu).initialize(name, symbol, matchingEngine, haifuManager, creator, wAIfuInfo);
+        allwAIfus.push(wAIfu);
+        return (wAIfu);
     }
 
     function isClone(address vault) external view returns (bool cloned) {
@@ -62,24 +62,24 @@ contract HaifuFactory is Initializable {
 
     /**
      * @dev Initialize orderbook factory contract with engine address, reinitialize if engine is reset.
-     * @param launchpad_ The address of the engine contract
+     * @param haifuManager_ The address of the engine contract
      * @return address of pair implementation contract
      */
-    function initialize(address launchpad_, address matchingEngine_) public initializer returns (address) {
-        launchpad = launchpad_;
+    function initialize(address haifuManager_, address matchingEngine_) public initializer returns (address) {
+        haifuManager = haifuManager_;
         matchingEngine = matchingEngine_;
         _createImpl();
         return impl;
     }
 
-    function allHaifusLength() public view returns (uint256) {
-        return allHaifus.length;
+    function allwAIfusLength() public view returns (uint256) {
+        return allwAIfus.length;
     }
 
     // Set immutable, consistant, one rule for orderbook implementation
     function _createImpl() internal {
         address addr;
-        bytes memory bytecode = type(Haifu).creationCode;
+        bytes memory bytecode = type(wAIfu).creationCode;
         bytes32 salt = keccak256(abi.encodePacked("haifu", version));
         assembly {
             addr := create2(0, add(bytecode, 0x20), mload(bytecode), salt)

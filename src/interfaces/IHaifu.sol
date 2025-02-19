@@ -21,11 +21,11 @@ interface IHaifu {
         uint256 carry;
         address fundManager;
         address deposit;
-        // {haifu token} / {deposit token}
+        // {wAIfu token} / {deposit token}
         uint256 depositPrice;
         uint256 goal;
         address HAIFU;
-        // {haifu token} / {$HAIFU}
+        // {wAIfu token} / {$HAIFU}
         uint256 haifuPrice;
         uint256 haifuGoal;
         uint256 fundAcceptingExpiaryDate;
@@ -38,7 +38,7 @@ interface IHaifu {
         uint32 orderId;
     }
 
-    struct HaifuOpenInfo {
+    struct wAIfuOpenInfo {
         address creator;
         address deposit;
         uint256 depositPrice;
@@ -53,7 +53,7 @@ interface IHaifu {
 
     function isWhitelisted(address account) external view returns (bool);
 
-    function openInfo() external view returns (HaifuOpenInfo memory);
+    function openInfo() external view returns (wAIfuOpenInfo memory);
 
     function fundAcceptingExpiaryDate() external view returns (uint256);
 
@@ -69,14 +69,14 @@ interface IHaifu {
         address matchingEngine,
         address launchpad,
         address creator,
-        State memory haifu
+        State memory wAIfuInfo
     ) external;
 
     function commit(address sender, address deposit, uint256 amount)
         external
-        returns (address haifu, uint256 haifuTAmount);
+        returns (address wAIfu, uint256 wAIfuTAmount);
 
-    function commitHaifu(address sender, uint256 amount) external returns (address haifu, uint256 haifuTAmount);
+    function commitHaifu(address sender, uint256 amount) external returns (address wAIfu, uint256 wAIfuTAmount);
 
     function withdraw(address sender, uint256 amount) external returns (address deposit, uint256 depositAmount);
 
@@ -92,7 +92,7 @@ interface IHaifu {
 
     function getCarry(address account, uint256 amount, bool isMaker) external view returns (uint256);
 
-    function getHaifu(string memory name, string memory symbol, address creator)
+    function getwAIfu(string memory name, string memory symbol, address creator)
         external
         view
         returns (State memory state);
@@ -109,7 +109,7 @@ interface IHaifu {
 
     function goal() external view returns (uint256);
 
-    function haifuCap() external view returns (uint256);
+    function haifuGoal() external view returns (uint256);
 
     function depositPrice() external view returns (uint256);
 
@@ -121,7 +121,7 @@ interface IHaifu {
 
     function open()
         external
-        returns (IHaifu.OrderInfo memory depositOrderInfo, IHaifu.OrderInfo memory haifuOrderInfo, uint256 leftHaifu);
+        returns (IHaifu.OrderInfo memory depositOrderInfo, IHaifu.OrderInfo memory wAIfuOrderInfo, uint256 leftHaifu);
 
     function expire(address deposit) external returns (IHaifu.OrderInfo memory rematchOrderInfo, bool expiredEarly);
 
