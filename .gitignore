@@ -1,5 +1,6 @@
 .idea/
 .env
+.env.local
 
 build/
 .DS_Store
