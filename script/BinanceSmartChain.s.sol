@@ -17,7 +17,7 @@ contract Deployer is Script {
 contract DeployHaifu is Deployer {
     function run() public {
         _setDeployer();
-        Haifu haifu = new Haifu();
+        new Haifu();
     }
 }
 

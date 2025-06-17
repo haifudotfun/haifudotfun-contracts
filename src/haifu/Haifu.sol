@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
@@ -19,6 +19,7 @@ contract Haifu is ERC20, ERC20Burnable, AccessControl {
 
     error MaxSupplyReached(uint256 currentSupply, uint256 newSupply);
     error SupplyTooHigh(uint256 maxSupply, uint256 currentSupply, uint256 newSupply);
+    event MaxSupplySet(uint256 newMaxSupply);
 
     function maxSupply() public view returns (uint256) {
         return MAX_SUPPLY;
@@ -32,6 +33,7 @@ contract Haifu is ERC20, ERC20Burnable, AccessControl {
             revert SupplyTooHigh(MAX_SUPPLY, totalSupply(), newMaxSupply);
         }
         MAX_SUPPLY = newMaxSupply;
+        emit MaxSupplySet(newMaxSupply);
     }
 
     constructor() ERC20("Haifu", "HAIFU") {
